@@ -1,10 +1,15 @@
 import { Request, Response } from "express";
-import z from "zod";
+import z, { number, object } from "zod";
 import { GeoJSONPolygon, GeoJSONPolygonSchema } from "../../types/types";
 import { REPLIERS_SERVICE } from "../../services/repliers.service";
 
 const schema = z.object({
   map: GeoJSONPolygonSchema.optional(),
+  coordinates: object({
+    lat: number(),
+    lng: number(),
+    radius: number(),
+  }).optional(),
 });
 
 export const searchListingsController = async (
@@ -12,15 +17,32 @@ export const searchListingsController = async (
   response: Response
 ) => {
   try {
-    const { map } = schema.parse(request.body);
+    const { map, coordinates } = schema.parse(request.body);
 
-    console.log("Coordinates", map?.coordinates);
+    let result;
 
-    const result = await REPLIERS_SERVICE().searchListings({
-      map: map?.coordinates as GeoJSONPolygon["coordinates"],
-    });
+    if (!map && !coordinates) {
+      return response.status(400).json({ error: "Missing map or coordinates" });
+    }
 
-    return response.status(200).json(result);
+    if (map) {
+      result = await REPLIERS_SERVICE().searchListings({
+        map: map?.coordinates as GeoJSONPolygon["coordinates"],
+      });
+    }
+
+    if (coordinates) {
+      result = await REPLIERS_SERVICE().searchListings({
+        coordinates: {
+          lat: coordinates.lat,
+          lng: coordinates.lng,
+          radius: coordinates.radius,
+        },
+      });
+    }
+
+    console.log(result);
+    return response.status(200).json({ message: "success", result });
   } catch (error) {
     console.log(error instanceof Error ? error.message : error);
     return response.status(400).json({ error: "Invalid request body" });

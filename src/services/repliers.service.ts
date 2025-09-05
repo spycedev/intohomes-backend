@@ -20,15 +20,32 @@ const repliersApi = axios.create({
 
 const searchListings = async ({
   map,
+  coordinates,
 }: {
-  map: GeoJSONPolygon["coordinates"];
+  map?: GeoJSONPolygon["coordinates"];
+  coordinates?: {
+    lat: number;
+    lng: number;
+    radius: number;
+  };
 }) => {
   try {
+    const params: any = {
+      resultsPerPage: 1000,
+    };
+
+    if (map) {
+      params.map = JSON.stringify(map);
+    }
+
+    if (coordinates) {
+      params.lat = coordinates.lat;
+      params.long = coordinates.lng;
+      params.radius = coordinates.radius;
+    }
+
     const response = await repliersApi.get<SearchResponse>("/listings", {
-      params: {
-        map: JSON.stringify(map),
-        resultsPerPage: 1000,
-      },
+      params,
     });
 
     return response.data;
