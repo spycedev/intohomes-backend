@@ -18,6 +18,11 @@ const repliersApi = axios.create({
   },
 });
 
+const getListing = async ({ mlsNumber }: { mlsNumber: string }) => {
+  const response = await repliersApi.get(`/listings/${mlsNumber}`);
+  return response.data;
+};
+
 const searchListings = async ({
   map,
   coordinates,
@@ -48,13 +53,20 @@ const searchListings = async ({
       params,
     });
 
-    return response.data;
+    return response.data as SearchResponse;
   } catch (error) {
     console.log(error);
     return error;
   }
 };
 
+const getSimilarListings = async ({ mlsNumber }: { mlsNumber: string }) => {
+  const response = await repliersApi.get(`/listings/${mlsNumber}/similar`);
+  return response.data;
+};
+
 export const REPLIERS_SERVICE = () => ({
   searchListings,
+  getListing,
+  getSimilarListings,
 });
