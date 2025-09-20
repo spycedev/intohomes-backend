@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import searchListingsRoutes from "./routes/listings/searchListings.routes";
 import cors from "cors";
 
@@ -8,8 +8,9 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Hello, TypeScript + Express!");
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
 });
 
 app.use("/api/listings", searchListingsRoutes);

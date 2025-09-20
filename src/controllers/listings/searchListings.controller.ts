@@ -12,6 +12,18 @@ const schema = z.object({
     lng: number(),
     radius: number(),
   }).optional(),
+  // Optional filters
+  maxPrice: z.number().optional(),
+  minPrice: z.number().optional(),
+  city: z.string().optional(),
+  minBedrooms: z.number().optional(),
+  maxBedrooms: z.number().optional(),
+  minBaths: z.number().optional(),
+  maxBaths: z.number().optional(),
+  propertyType: z.enum(["house", "condo", "townhouse"]).optional(),
+  status: z.enum(["active", "unavailable"]).optional(),
+  minSqft: z.number().optional(),
+  maxSqft: z.number().optional(),
 });
 
 export const searchListingsController = async (
@@ -19,7 +31,21 @@ export const searchListingsController = async (
   response: Response
 ) => {
   try {
-    const { map, coordinates } = schema.parse(request.body);
+    const {
+      map,
+      coordinates,
+      maxPrice,
+      minPrice,
+      city,
+      minBedrooms,
+      maxBedrooms,
+      minBaths,
+      maxBaths,
+      propertyType,
+      status,
+      minSqft,
+      maxSqft,
+    } = schema.parse(request.body);
 
     let result: SearchResponse | undefined;
 
@@ -27,19 +53,35 @@ export const searchListingsController = async (
       return response.status(400).json({ error: "Missing map or coordinates" });
     }
 
+    const filters = {
+      maxPrice,
+      minPrice,
+      city,
+      minBedrooms,
+      maxBedrooms,
+      minBaths,
+      maxBaths,
+      propertyType,
+      status,
+      minSqft,
+      maxSqft,
+    };
+
+    console.log(filters);
+
     if (map) {
       result = (await REPLIERS_SERVICE().searchListings({
-        map: map?.coordinates as GeoJSONPolygon["coordinates"],
+        map: map.coordinates as GeoJSONPolygon["coordinates"],
+        filters,
       })) as SearchResponse;
-    }
-
-    if (coordinates) {
+    } else if (coordinates) {
       result = (await REPLIERS_SERVICE().searchListings({
         coordinates: {
           lat: coordinates.lat,
           lng: coordinates.lng,
           radius: coordinates.radius,
         },
+        filters,
       })) as SearchResponse;
     }
 
