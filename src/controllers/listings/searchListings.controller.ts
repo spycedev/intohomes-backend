@@ -13,9 +13,13 @@ const schema = z.object({
     radius: number(),
   }).optional(),
   // Optional filters
+  streetNumber: z.string().optional(),
+  streetName: z.string().optional(),
+  zip: z.string().optional(),
   maxPrice: z.number().optional(),
   minPrice: z.number().optional(),
   city: z.string().optional(),
+  areaOrCity: z.string().optional(),
   minBedrooms: z.number().optional(),
   maxBedrooms: z.number().optional(),
   minBaths: z.number().optional(),
@@ -24,6 +28,7 @@ const schema = z.object({
   status: z.enum(["active", "unavailable"]).optional(),
   minSqft: z.number().optional(),
   maxSqft: z.number().optional(),
+  mlsNumbers: z.array(z.string()).optional(),
 });
 
 export const searchListingsController = async (
@@ -37,6 +42,7 @@ export const searchListingsController = async (
       maxPrice,
       minPrice,
       city,
+      areaOrCity,
       minBedrooms,
       maxBedrooms,
       minBaths,
@@ -45,18 +51,23 @@ export const searchListingsController = async (
       status,
       minSqft,
       maxSqft,
+      mlsNumbers,
+      streetNumber,
+      streetName,
+      zip,
     } = schema.parse(request.body);
 
     let result: SearchResponse | undefined;
 
-    if (!map && !coordinates) {
-      return response.status(400).json({ error: "Missing map or coordinates" });
-    }
+    // if (!map && !areaOrCity && !coordinates) {
+    //   return response.status(400).json({ error: "Missing map or coordinates" });
+    // }
 
     const filters = {
       maxPrice,
       minPrice,
       city,
+      areaOrCity,
       minBedrooms,
       maxBedrooms,
       minBaths,
@@ -65,31 +76,23 @@ export const searchListingsController = async (
       status,
       minSqft,
       maxSqft,
+      mlsNumbers,
+      streetNumber,
+      streetName,
+      zip,
     };
 
-    console.log(filters);
+    const coordinatesObj = {
+      lat: coordinates?.lat,
+      lng: coordinates?.lng,
+      radius: coordinates?.radius,
+    };
 
-    if (map) {
-      result = (await REPLIERS_SERVICE().searchListings({
-        map: map.coordinates as GeoJSONPolygon["coordinates"],
-        filters,
-      })) as SearchResponse;
-    } else if (coordinates) {
-      result = (await REPLIERS_SERVICE().searchListings({
-        coordinates: {
-          lat: coordinates.lat,
-          lng: coordinates.lng,
-          radius: coordinates.radius,
-        },
-        filters,
-      })) as SearchResponse;
-    }
-
-    // result?.listings.map((listing) => {
-    //   console.log(listing.agents);
-    //   console.log(listing.office);
-    //   return listing;
-    // });
+    result = (await REPLIERS_SERVICE().searchListings({
+      map: map?.coordinates as GeoJSONPolygon["coordinates"],
+      coordinates: coordinatesObj,
+      filters,
+    })) as SearchResponse;
 
     return response.status(200).json({ message: "success", result });
   } catch (error) {

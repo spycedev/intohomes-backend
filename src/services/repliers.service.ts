@@ -33,11 +33,12 @@ const searchListings = async ({
 }: {
   map?: GeoJSONPolygon["coordinates"];
   coordinates?: {
-    lat: number;
-    lng: number;
-    radius: number;
+    lat: number | undefined;
+    lng: number | undefined;
+    radius: number | undefined;
   };
   filters?: {
+    areaOrCity?: string | undefined;
     maxPrice?: number | undefined;
     minPrice?: number | undefined;
     city?: string | undefined;
@@ -49,18 +50,28 @@ const searchListings = async ({
     status?: ("active" | "unavailable") | undefined;
     minSqft?: number | undefined;
     maxSqft?: number | undefined;
+    mlsNumbers?: string[] | undefined;
+    streetNumber?: string | undefined;
+    streetName?: string | undefined;
+    zip?: string | undefined;
   };
 }) => {
   try {
-    const params: Record<string, any> = {
-      resultsPerPage: 200,
-    };
+    const params: Record<string, any> = {};
 
-    if (map) {
+    if (map || filters?.areaOrCity) {
       params.map = JSON.stringify(map);
+      params.areaOrCity = filters?.areaOrCity;
     }
 
-    if (coordinates) {
+    // params.streetName = "Skinner";
+
+    if (
+      coordinates &&
+      coordinates.lat &&
+      coordinates.lng &&
+      coordinates.radius
+    ) {
       params.lat = coordinates.lat;
       params.long = coordinates.lng;
       params.radius = coordinates.radius;
@@ -79,6 +90,10 @@ const searchListings = async ({
         status,
         minSqft,
         maxSqft,
+        mlsNumbers,
+        streetNumber,
+        streetName,
+        zip,
       } = filters;
 
       if (typeof minPrice === "number" && minPrice > 0)
@@ -96,9 +111,21 @@ const searchListings = async ({
           status === "active" ? "a" : status === "unavailable" ? "u" : null;
       if (typeof minSqft === "number") params.minSqft = minSqft;
       if (typeof maxSqft === "number") params.maxSqft = maxSqft;
+      if (streetNumber) params.streetNumber = streetNumber;
+      if (streetName) params.streetName = streetName;
+      if (zip) params.zip = zip;
+
+      if (mlsNumbers && mlsNumbers.length > 0) {
+        params.mlsNumber = [];
+        mlsNumbers.forEach((mlsNumber) => {
+          if (typeof mlsNumber === "string" && mlsNumber[0] === "R") {
+            params.mlsNumber.push(mlsNumber);
+          }
+        });
+      }
     }
 
-    console.log(params);
+    console.log("Params", params);
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,
     });
