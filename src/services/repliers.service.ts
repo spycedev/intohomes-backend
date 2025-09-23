@@ -95,26 +95,6 @@ const searchListings = async ({
         streetName,
         zip,
       } = filters;
-
-      if (typeof minPrice === "number" && minPrice > 0)
-        params.minPrice = minPrice;
-      if (typeof maxPrice === "number" && maxPrice > 0)
-        params.maxPrice = maxPrice;
-      if (city) params.city = city;
-      if (typeof minBedrooms === "number") params.minBedrooms = minBedrooms;
-      if (typeof maxBedrooms === "number") params.maxBedrooms = maxBedrooms;
-      if (typeof minBaths === "number") params.minBaths = minBaths;
-      if (typeof maxBaths === "number") params.maxBaths = maxBaths;
-      if (propertyType) params.propertyType = propertyType;
-      if (status)
-        params.status =
-          status === "active" ? "a" : status === "unavailable" ? "u" : null;
-      if (typeof minSqft === "number") params.minSqft = minSqft;
-      if (typeof maxSqft === "number") params.maxSqft = maxSqft;
-      if (streetNumber) params.streetNumber = streetNumber;
-      if (streetName) params.streetName = streetName;
-      if (zip) params.zip = zip;
-
       if (mlsNumbers && mlsNumbers.length > 0) {
         params.mlsNumber = [];
         mlsNumbers.forEach((mlsNumber) => {
@@ -122,6 +102,25 @@ const searchListings = async ({
             params.mlsNumber.push(mlsNumber);
           }
         });
+      } else {
+        if (typeof minPrice === "number" && minPrice > 0)
+          params.minPrice = minPrice;
+        if (typeof maxPrice === "number" && maxPrice > 0)
+          params.maxPrice = maxPrice;
+        if (typeof minBedrooms === "number") params.minBedrooms = minBedrooms;
+        if (typeof maxBedrooms === "number") params.maxBedrooms = maxBedrooms;
+        if (typeof minBaths === "number") params.minBaths = minBaths;
+        if (typeof maxBaths === "number") params.maxBaths = maxBaths;
+        if (propertyType) params.propertyType = propertyType;
+        if (status)
+          params.status =
+            status === "active" ? "a" : status === "unavailable" ? "u" : null;
+        if (typeof minSqft === "number") params.minSqft = minSqft;
+        if (typeof maxSqft === "number") params.maxSqft = maxSqft;
+        if (city) params.city = city;
+        if (streetNumber) params.streetNumber = streetNumber;
+        if (streetName) params.streetName = streetName;
+        if (zip) params.zip = zip;
       }
     }
 
