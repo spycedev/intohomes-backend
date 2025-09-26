@@ -3,10 +3,7 @@ import dotenv from "dotenv";
 import { GeoJSONPolygon } from "../types/types";
 import axios from "axios";
 
-import {
-  SearchRequest,
-  SearchResponse,
-} from "@repliers.io/api-types/types/listings";
+import { SearchResponse } from "@repliers.io/api-types/types/listings";
 
 dotenv.config();
 
@@ -39,6 +36,7 @@ const searchListings = async ({
   };
   filters?: {
     areaOrCity?: string | undefined;
+    propertyClass?: string[] | undefined;
     maxPrice?: number | undefined;
     minPrice?: number | undefined;
     city?: string | undefined;
@@ -58,6 +56,9 @@ const searchListings = async ({
 }) => {
   try {
     const params: Record<string, any> = {};
+
+    // Default to residential
+    // params.class = "residential";
 
     if (map || filters?.areaOrCity) {
       params.map = JSON.stringify(map);
@@ -79,6 +80,7 @@ const searchListings = async ({
 
     if (filters) {
       const {
+        propertyClass,
         maxPrice,
         minPrice,
         city,
@@ -95,6 +97,7 @@ const searchListings = async ({
         streetName,
         zip,
       } = filters;
+
       if (mlsNumbers && mlsNumbers.length > 0) {
         params.mlsNumber = [];
         mlsNumbers.forEach((mlsNumber) => {
@@ -103,6 +106,7 @@ const searchListings = async ({
           }
         });
       } else {
+        if (propertyClass) params.class = propertyClass || "residential";
         if (typeof minPrice === "number" && minPrice > 0)
           params.minPrice = minPrice;
         if (typeof maxPrice === "number" && maxPrice > 0)
@@ -124,7 +128,6 @@ const searchListings = async ({
       }
     }
 
-    console.log("Params", params);
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,
     });

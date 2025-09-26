@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import z, { number, object } from "zod";
 import { GeoJSONPolygon, GeoJSONPolygonSchema } from "../../types/types";
 import { REPLIERS_SERVICE } from "../../services/repliers.service";
-import { Listings } from "@repliers.io/api-types";
 import { SearchResponse } from "@repliers.io/api-types/types/listings";
 
 const schema = z.object({
@@ -28,6 +27,7 @@ const schema = z.object({
   status: z.enum(["active", "unavailable"]).optional(),
   minSqft: z.number().optional(),
   maxSqft: z.number().optional(),
+  propertyClass: z.string().optional(),
   mlsNumbers: z.array(z.string()).optional(),
 });
 
@@ -35,6 +35,7 @@ export const searchListingsController = async (
   request: Request,
   response: Response
 ) => {
+  console.log("Request", request.body);
   try {
     const {
       map,
@@ -55,6 +56,7 @@ export const searchListingsController = async (
       streetNumber,
       streetName,
       zip,
+      propertyClass,
     } = schema.parse(request.body);
 
     let result: SearchResponse | undefined;
@@ -80,6 +82,7 @@ export const searchListingsController = async (
       streetNumber,
       streetName,
       zip,
+      propertyClass: propertyClass?.split(","),
     };
 
     const coordinatesObj = {
