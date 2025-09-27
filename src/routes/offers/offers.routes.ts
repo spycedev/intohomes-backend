@@ -46,20 +46,25 @@ function formatOfferMessage(
 }
 
 router.post("/create", async (req, res) => {
-  console.log(req.body);
-  const mlsNumber = req.body.mlsNumber;
+  try {
+    console.log(req.body);
+    const mlsNumber = req.body.mlsNumber;
 
-  const listing = await REPLIERS_SERVICE().getListing({ mlsNumber });
+    const listing = await REPLIERS_SERVICE().getListing({ mlsNumber });
 
-  const listingAddress = `${listing.address.streetNumber} ${listing.address.streetName}`;
+    const listingAddress = `${listing.address.streetNumber} ${listing.address.streetName}`;
 
-  const messageText = formatOfferMessage(req.body, mlsNumber, listingAddress);
+    const messageText = formatOfferMessage(req.body, mlsNumber, listingAddress);
 
-  console.log(messageText);
+    console.log(messageText);
 
-  plivoService.sendSms("+12506383302", messageText);
+    plivoService.sendSms("+12506383302", messageText);
 
-  return res.json({ message: "success" });
+    return res.json({ message: "success" });
+  } catch (error) {
+    console.log(error);
+    return res.json({ message: "error" });
+  }
 });
 
 export default router;
