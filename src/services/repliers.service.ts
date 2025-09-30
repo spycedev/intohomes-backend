@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 import { GeoJSONPolygon } from "../types/types";
 import axios from "axios";
 
-import { SearchResponse } from "@repliers.io/api-types/types/listings";
+import {
+  ListingResponse,
+  SearchResponse,
+} from "@repliers.io/api-types/types/listings";
 
 dotenv.config();
 
@@ -20,7 +23,8 @@ const repliersApi = axios.create({
 
 const getListing = async ({ mlsNumber }: { mlsNumber: string }) => {
   const response = await repliersApi.get(`/listings/${mlsNumber}`);
-  return response.data;
+
+  return response.data as ListingResponse;
 };
 
 const searchListings = async ({
