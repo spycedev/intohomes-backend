@@ -8,8 +8,7 @@ import authRoutes from "./routes/auth/auth.routes";
 
 import cookieParser from "cookie-parser";
 import { connectDb } from "./db";
-import { authRequired } from "./helpers/auth";
-import User from "./models/User";
+
 import meRoutes from "./routes/me/me.routes";
 
 const app = express();
@@ -19,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend domain
+    origin: process.env.CORS_ORIGINS!.split(",").map((origin) => origin.trim()), // your frontend domain
     credentials: true, // allow cookies to be sent
   })
 );
