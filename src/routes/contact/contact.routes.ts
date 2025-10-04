@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { z } from "zod";
+import { z, ZodError } from "zod";
 import { PLIVO_SERVICE } from "../../services/plivo.service";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
 import { formatUpperCaseFirstLetterWord } from "../../helpers/formatText";
@@ -28,7 +28,7 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
 
     plivoService.sendSms(
       "+12506383302",
-      `Morgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
+      `Mortgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
     );
 
     plivoService.sendSms(
@@ -38,7 +38,15 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
 
     return res.json({ message: "success" });
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log(error.message);
+      return res.status(400).json({ message: error.message });
+    }
+
+    if (error instanceof ZodError) {
+      console.log(error.message);
+      return res.status(400).json({ message: error.message });
+    }
     return res.status(500).json({ message: "error" });
   }
 });
