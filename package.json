@@ -23,6 +23,7 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "libphonenumber-js": "^1.12.23",
     "mongoose": "^8.18.2",
     "nodemailer": "^7.0.6",
     "plivo": "^4.75.1",

@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { z } from "zod";
 import User from "../../models/User";
 import Offer from "../../models/Offer";
+import { parsePhoneNumberWithError } from "libphonenumber-js";
 const plivoService = PLIVO_SERVICE();
 
 const schema = z.object({
@@ -31,6 +32,10 @@ export const createOffer = async (req: Request, res: Response) => {
 
     const { contactInfo } = validatedData;
 
+    const parsedPhone = parsePhoneNumberWithError(contactInfo.phone);
+
+    const formattedPhone = parsedPhone.formatNational();
+
     const mlsNumber = validatedData?.mlsNumber;
 
     const listing = await REPLIERS_SERVICE().getListing({ mlsNumber });
@@ -46,7 +51,7 @@ export const createOffer = async (req: Request, res: Response) => {
       user = await User.create({
         email: contactInfo.email,
         name: contactInfo.name,
-        phone: contactInfo.phone,
+        phone: formattedPhone,
         role: "CLIENT",
       });
     }
@@ -76,7 +81,7 @@ export const createOffer = async (req: Request, res: Response) => {
 
     plivoService.sendSms("+12506383302", messageText);
     plivoService.sendSms(
-      user.phone || contactInfo.phone,
+      user.phone || formattedPhone,
       `Hey ${contactInfo.name}, we have received your offer for ${mlsNumber}! A realtor will get back to you soon.`
     );
 
