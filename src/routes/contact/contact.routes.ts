@@ -28,15 +28,15 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
 
     const formattedName = formatUpperCaseFirstLetterWord(validatedData.name);
 
-    plivoService.sendSms(
-      process.env.MORTGAGE_INQUIRY_TO_PHONE || "+12506383302",
-      `Mortgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
-    );
+    // plivoService.sendSms(
+    //   process.env.MORTGAGE_INQUIRY_TO_PHONE || "+12506383302",
+    //   `Mortgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
+    // );
 
-    plivoService.sendSms(
-      `+1${formattedPhone}`,
-      `Hey ${formattedName}, we have received your mortgage inquiry! We will get back to you soon.`
-    );
+    // plivoService.sendSms(
+    //   `+1${formattedPhone}`,
+    //   `Hey ${formattedName}, we have received your mortgage inquiry! We will get back to you soon.`
+    // );
 
     // Send inquiry details via email to the team inbox
     const INQUIRY_TO =

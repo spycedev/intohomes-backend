@@ -7,11 +7,12 @@ dotenv.config();
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
   port: Number(process.env.EMAIL_PORT || 587),
-  secure: true, // use STARTTLS
+  secure: false, // STARTTLS
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
+  tls: { ciphers: "SSLv3" },
 });
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
@@ -54,15 +55,12 @@ export const sendLoginLinkEmail = async (
   params: { loginUrl: string; userEmail: string; expiresInMinutes: number }
 ) => {
   const { loginUrl, userEmail, expiresInMinutes } = params;
-  const html = await renderTemplate(
-    "../templates/loginLinkEmail.html",
-    {
-      loginUrl,
-      userEmail,
-      expiresInMinutes: String(expiresInMinutes),
-      year: String(new Date().getFullYear()),
-    }
-  );
+  const html = await renderTemplate("../templates/loginLinkEmail.html", {
+    loginUrl,
+    userEmail,
+    expiresInMinutes: String(expiresInMinutes),
+    year: String(new Date().getFullYear()),
+  });
 
   const subject = "Your IntoHomes sign-in link";
   return sendEmail(to, subject, html);
@@ -73,22 +71,25 @@ export const sendLoginLinkEmail = async (
  */
 export const sendMortgageInquiryEmail = async (
   to: string,
-  params: { name: string; email: string; phone: string; message: string; submittedAt?: string }
+  params: {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    submittedAt?: string;
+  }
 ) => {
   const { name, email, phone, message } = params;
   const submittedAt = params.submittedAt ?? new Date().toISOString();
 
-  const html = await renderTemplate(
-    "../templates/mortgageInquiryEmail.html",
-    {
-      name,
-      email,
-      phone,
-      message,
-      submittedAt,
-      year: String(new Date().getFullYear()),
-    }
-  );
+  const html = await renderTemplate("../templates/mortgageInquiryEmail.html", {
+    name,
+    email,
+    phone,
+    message,
+    submittedAt,
+    year: String(new Date().getFullYear()),
+  });
 
   const subject = `New Mortgage Inquiry from ${name}`;
   return sendEmail(to, subject, html);
