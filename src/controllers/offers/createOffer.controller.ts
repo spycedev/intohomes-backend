@@ -32,7 +32,7 @@ export const createOffer = async (req: Request, res: Response) => {
 
     const { contactInfo } = validatedData;
 
-    const parsedPhone = parsePhoneNumberWithError(contactInfo.phone);
+    const parsedPhone = parsePhoneNumberWithError(contactInfo.phone, "US");
 
     const formattedPhone = parsedPhone.formatNational();
 
