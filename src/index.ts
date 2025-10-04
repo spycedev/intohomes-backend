@@ -18,10 +18,25 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGINS!.split(",").map((origin) => origin.trim()), // your frontend domain
-    credentials: true, // allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: (origin, callback) => {
+      if (
+        process.env.CORS_ORIGINS?.split(",")
+          .map((origin) => origin.trim())
+          .includes(origin!)
+      ) {
+        callback(null, true);
+      } else {
+        console.log("Origin not allowed by CORS", origin);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
   })
 );
+
+// app.options("*", cors());
 
 connectDb();
 
