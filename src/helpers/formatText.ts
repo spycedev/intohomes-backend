@@ -38,4 +38,14 @@ function formatOfferMessage(
   );
 }
 
+export const formatUpperCaseFirstLetterWord = (words: string) => {
+  const wordsArray = words.split(" ");
+  const formattedWords = wordsArray.map((word) => {
+    const firstLetter = word[0]?.toUpperCase();
+    const lastName = word.slice(1);
+    return `${firstLetter} ${lastName}`;
+  });
+  return formattedWords.join(" ");
+};
+
 export default formatOfferMessage;

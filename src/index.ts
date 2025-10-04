@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { connectDb } from "./db";
 
 import meRoutes from "./routes/me/me.routes";
+import { contactRoutes } from "./routes/contact/contact.routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
     origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
       if (
         process.env.CORS_ORIGINS?.split(",")
           .map((origin) => origin.trim())
@@ -44,6 +46,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
+
+app.use("/api/contact", contactRoutes);
 
 app.use("/api/listings", searchListingsRoutes);
 app.use("/api/offers", offersRoutes);

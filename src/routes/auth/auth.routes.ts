@@ -87,10 +87,12 @@ router.post("/request-login", async (req: Request, res: Response) => {
       expiresIn: "10m",
     });
 
+    const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:3000";
+
     await emailService.sendEmail(
       user.email,
       "Login Request",
-      `Please click the link below to login: <a href="http://localhost:3000/api/auth/verify?token=${token}">Login</a>`
+      `Please click the link below to login: <a href="${BACKEND_URL}/api/auth/verify?token=${token}">Login</a>`
     );
 
     return res.json({ token });

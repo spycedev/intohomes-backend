@@ -34,7 +34,7 @@ export const createOffer = async (req: Request, res: Response) => {
 
     const parsedPhone = parsePhoneNumberWithError(contactInfo.phone, "US");
 
-    const formattedPhone = parsedPhone.formatNational();
+    const formattedPhone = parsedPhone.nationalNumber;
 
     const mlsNumber = validatedData?.mlsNumber;
 
@@ -51,7 +51,7 @@ export const createOffer = async (req: Request, res: Response) => {
       user = await User.create({
         email: contactInfo.email,
         name: contactInfo.name,
-        phone: formattedPhone,
+        phone: `+1${formattedPhone}`,
         role: "CLIENT",
       });
     }
@@ -81,7 +81,7 @@ export const createOffer = async (req: Request, res: Response) => {
 
     plivoService.sendSms("+12506383302", messageText);
     plivoService.sendSms(
-      user.phone || formattedPhone,
+      user.phone || `+1${formattedPhone}`,
       `Hey ${contactInfo.name}, we have received your offer for ${mlsNumber}! A realtor will get back to you soon.`
     );
 
