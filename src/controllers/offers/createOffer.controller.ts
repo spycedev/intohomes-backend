@@ -46,6 +46,10 @@ export const createOffer = async (req: Request, res: Response) => {
 
     // Check if user already exists with email
     let user = await User.findOne({ email: contactInfo.email, role: "CLIENT" });
+    if (user) {
+      user.phone = `+1${formattedPhone}`;
+      await user.save();
+    }
 
     if (!user) {
       user = await User.create({
@@ -83,7 +87,7 @@ export const createOffer = async (req: Request, res: Response) => {
 
     plivoService.sendSms("+12506383302", messageText);
     plivoService.sendSms(
-      user.phone || `+1${formattedPhone}`,
+      `+1${formattedPhone}`,
       `Hey ${contactInfo.name}, we have received your offer for ${mlsNumber}! A realtor will get back to you soon.`
     );
 
