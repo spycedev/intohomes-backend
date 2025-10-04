@@ -79,6 +79,8 @@ export const createOffer = async (req: Request, res: Response) => {
       return res.status(500).json({ message: "error" });
     }
 
+    console.log("Formatted phone", `+1${formattedPhone}`);
+
     plivoService.sendSms("+12506383302", messageText);
     plivoService.sendSms(
       user.phone || `+1${formattedPhone}`,
