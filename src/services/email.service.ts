@@ -1,31 +1,29 @@
 import fs from "fs";
 import path from "path";
-import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { MailtrapClient } from "mailtrap";
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: Number(process.env.EMAIL_PORT || 587),
-  secure: false, // STARTTLS
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: { ciphers: "SSLv3" },
-});
+const client = new MailtrapClient({ token: process.env.MAILERTRAP_API_KEY! });
+
+console.log("Client", client);
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
-    await transporter.sendMail({
-      to,
-      from: process.env.FROM_EMAIL,
+    const sender = {
+      name: process.env.FROM_NAME!,
+      email: process.env.FROM_EMAIL!,
+    };
+    return await client.send({
+      to: [{ email: to }],
+      from: sender,
       subject,
       html,
     });
-    return true;
   } catch (error) {
-    console.log(error);
+    if (error instanceof Error) {
+      console.log(error.message);
+    }
     return false;
   }
 };
