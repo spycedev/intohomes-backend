@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { REPLIERS_SERVICE } from "../../services/repliers.service";
+import { AxiosError } from "axios";
 
 export const getSimilarListingsController = async (
   request: Request,
@@ -8,14 +9,15 @@ export const getSimilarListingsController = async (
   try {
     const { mlsNumber } = request.params;
 
-    console.log("Fetching similar listings with mlsNumber");
     const result = await REPLIERS_SERVICE().getSimilarListings({
       mlsNumber: mlsNumber as string,
     });
 
-    console.log("Result fetched", JSON.stringify(result));
     return response.json({ result });
   } catch (error) {
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data);
+    }
     console.log(error);
     return response.status(400).json({ error: "Invalid request body" });
   }
