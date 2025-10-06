@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 
 import { GeoJSONPolygon } from "../types/types";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 import {
   ListingResponse,
@@ -135,7 +135,7 @@ const searchListings = async ({
       }
     }
 
-    console.log("Params", params);
+    console.log("Request");
 
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,
@@ -143,7 +143,10 @@ const searchListings = async ({
 
     return response.data as SearchResponse;
   } catch (error) {
-    console.log(error);
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data);
+    }
+
     return error;
   }
 };
