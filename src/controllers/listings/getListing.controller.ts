@@ -7,7 +7,7 @@ export const getListingController = async (
 ) => {
   const { mlsNumber } = request.params;
 
-  console.log("Fetching listing with mlsNumber");
+  console.log("Fetching listing with mlsNumber", mlsNumber);
 
   const result = await REPLIERS_SERVICE().getListing({
     mlsNumber: mlsNumber as string,

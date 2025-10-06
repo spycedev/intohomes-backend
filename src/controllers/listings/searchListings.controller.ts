@@ -3,6 +3,7 @@ import z, { number, object } from "zod";
 import { GeoJSONPolygon, GeoJSONPolygonSchema } from "../../types/types";
 import { REPLIERS_SERVICE } from "../../services/repliers.service";
 import { SearchResponse } from "@repliers.io/api-types/types/listings";
+import { AxiosError } from "axios";
 
 const schema = z.object({
   map: GeoJSONPolygonSchema.optional(),
@@ -99,7 +100,9 @@ export const searchListingsController = async (
 
     return response.status(200).json({ message: "success", result });
   } catch (error) {
-    console.log(error instanceof Error ? error.message : error);
+    if (error instanceof AxiosError) {
+      console.log(error.response?.data);
+    }
     return response.status(400).json({ error: "Invalid request body" });
   }
 };
