@@ -38,8 +38,6 @@ app.use(
   })
 );
 
-app.options(/.*/, cors());
-
 connectDb();
 
 app.use((req: Request, res: Response, next: NextFunction) => {

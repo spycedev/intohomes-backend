@@ -93,8 +93,37 @@ export const sendMortgageInquiryEmail = async (
   return sendEmail(to, subject, html);
 };
 
+export const sendGeneralInquiryEmail = async (
+  to: string,
+  params: {
+    name: string;
+    email: string;
+    phone: string;
+    message: string;
+    preferredContact: string;
+    submittedAt?: string;
+  }
+) => {
+  const { name, email, phone, message, preferredContact } = params;
+  const submittedAt = params.submittedAt ?? new Date().toISOString();
+
+  const html = await renderTemplate("../templates/generalInquiryEmail.html", {
+    name,
+    email,
+    phone,
+    message,
+    preferredContact,
+    submittedAt,
+    year: String(new Date().getFullYear()),
+  });
+
+  const subject = `New General Inquiry from ${name}`;
+  return sendEmail(to, subject, html);
+};
+
 export const EMAIL_SERVICE = () => ({
   sendEmail,
   sendLoginLinkEmail,
   sendMortgageInquiryEmail,
+  sendGeneralInquiryEmail,
 });

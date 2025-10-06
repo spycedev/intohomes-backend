@@ -82,6 +82,9 @@ const searchListings = async ({
       params.radius = coordinates.radius;
     }
 
+    params.status = "A";
+    params.class = ["residential", "condo"];
+
     if (filters) {
       const {
         propertyClass,
@@ -131,6 +134,8 @@ const searchListings = async ({
         if (zip) params.zip = zip;
       }
     }
+
+    console.log("Params", params);
 
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,

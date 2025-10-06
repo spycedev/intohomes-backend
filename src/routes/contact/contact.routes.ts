@@ -4,6 +4,7 @@ import { PLIVO_SERVICE } from "../../services/plivo.service";
 import { EMAIL_SERVICE } from "../../services/email.service";
 import { parsePhoneNumberWithError } from "libphonenumber-js";
 import { formatUpperCaseFirstLetterWord } from "../../helpers/formatText";
+import { generalInquiry } from "../../controllers/contact/generalInquiry.controller";
 
 export const contactRoutes = Router();
 
@@ -28,10 +29,10 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
 
     const formattedName = formatUpperCaseFirstLetterWord(validatedData.name);
 
-    // plivoService.sendSms(
-    //   process.env.MORTGAGE_INQUIRY_TO_PHONE || "+12506383302",
-    //   `Mortgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
-    // );
+    plivoService.sendSms(
+      process.env.MORTGAGE_INQUIRY_TO_PHONE || "+12506383302",
+      `Mortgage inquiry from ${formattedName}: ${validatedData.message}, ${validatedData.email}, ${validatedData.phone}`
+    );
 
     // plivoService.sendSms(
     //   `+1${formattedPhone}`,
@@ -45,7 +46,7 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
       await emailService.sendMortgageInquiryEmail(INQUIRY_TO, {
         name: formattedName,
         email: validatedData.email,
-        phone: validatedData.phone,
+        phone: formattedPhone,
         message: validatedData.message,
         submittedAt: new Date().toISOString(),
       });
@@ -65,3 +66,5 @@ contactRoutes.post("/mortgage-inquiry", async (req, res) => {
     return res.status(500).json({ message: "error" });
   }
 });
+
+contactRoutes.post("/general-inquiry", generalInquiry);
