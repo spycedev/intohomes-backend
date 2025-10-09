@@ -53,7 +53,7 @@ router.get("/verify", (req: Request, res: Response) => {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
-    return res.redirect("http://localhost:5173");
+    return res.redirect(`${process.env.FRONTEND_URL}`);
   } catch (error) {
     console.error(error);
     return res.status(400).json({ message: "Invalid or expired token" });

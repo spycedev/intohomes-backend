@@ -62,10 +62,6 @@ export const searchListingsController = async (
 
     let result: SearchResponse | undefined;
 
-    // if (!map && !areaOrCity && !coordinates) {
-    //   return response.status(400).json({ error: "Missing map or coordinates" });
-    // }
-
     const filters = {
       maxPrice,
       minPrice,
