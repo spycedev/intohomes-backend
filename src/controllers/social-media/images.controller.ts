@@ -268,7 +268,7 @@ export const imagesController = async (req: Request, res: Response) => {
 
       ctx.font = "24px Inter";
       ctx.fillStyle = "#ffffff";
-      ctx.fillText("(250) 631-3302", 60, headerY + 110);
+      ctx.fillText("(250) 638-3302", 60, headerY + 110);
 
       ctx.font = "24px Inter";
       ctx.fillStyle = "#e2e8f0";
