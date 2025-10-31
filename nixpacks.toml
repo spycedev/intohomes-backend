@@ -1,9 +1,8 @@
 [phases.setup]
-# Ensure core utilities are available
-nixPkgs = ["bash", "coreutils"]
+nixPkgs = ["bash", "coreutils", "nodejs_20"]
 
 [phases.install]
-# Install system libraries needed for node-canvas, sharp, etc.
+# Required native libs for node-canvas, sharp, etc.
 aptPkgs = [
   "build-essential",
   "libcairo2-dev",
@@ -13,12 +12,12 @@ aptPkgs = [
   "librsvg2-dev"
 ]
 
-# Install Node.js 20 (stable LTS)
-[phases.build]
-nixPkgs = ["nodejs_20"]
-
 cmds = [
-  "npm ci --omit=dev",
+  "npm ci --omit=dev"
+]
+
+[phases.build]
+cmds = [
   "npm run build"
 ]
 
