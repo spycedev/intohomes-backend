@@ -303,6 +303,7 @@ export const imagesController = async (req: Request, res: Response) => {
     const buffer = canvas.toBuffer("image/png");
     res.set("Content-Type", "image/png");
     res.set("Content-Length", buffer.length.toString());
+    res.set("Cache-Control", "public, max-age=604800");
     res.send(buffer);
   } catch (error) {
     if (error instanceof AxiosError) {
