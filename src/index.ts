@@ -11,6 +11,7 @@ import { connectDb } from "./db";
 
 import meRoutes from "./routes/me/me.routes";
 import { contactRoutes } from "./routes/contact/contact.routes";
+import { imagesController } from "./controllers/social-media/images.controller";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -52,6 +53,8 @@ app.use("/api/offers", offersRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/me", meRoutes);
+
+app.use("/api/listings/:mlsNumber/social-media/images", imagesController);
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);

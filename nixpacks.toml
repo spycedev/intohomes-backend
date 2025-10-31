@@ -1,0 +1,26 @@
+[phases.setup]
+# Use an Ubuntu base image to ensure apt packages are available
+nixPkgs = ["bash", "coreutils"]
+
+[phases.install]
+aptPkgs = [
+  "build-essential",
+  "libcairo2-dev",
+  "libpango1.0-dev",
+  "libjpeg-dev",
+  "libgif-dev",
+  "librsvg2-dev"
+]
+
+# Specify Node version (adjust as needed)
+[phases.build]
+nixPkgs = ["nodejs_22"]
+
+# Commands to install dependencies and build your app
+cmds = [
+  "npm ci --omit=dev",
+  "npm run build"
+]
+
+[start]
+cmd = "npm start"

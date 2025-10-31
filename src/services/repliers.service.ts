@@ -135,8 +135,6 @@ const searchListings = async ({
       }
     }
 
-    console.log("Request");
-
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,
     });

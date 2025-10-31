@@ -36,7 +36,6 @@ export const searchListingsController = async (
   request: Request,
   response: Response
 ) => {
-  console.log("Request", request.body);
   try {
     const {
       map,
@@ -79,7 +78,7 @@ export const searchListingsController = async (
       streetNumber,
       streetName,
       zip,
-      propertyClass: propertyClass?.split(","),
+      propertyClass: propertyClass?.split(",").map((item) => item.trim()),
     };
 
     const coordinatesObj = {
@@ -94,7 +93,12 @@ export const searchListingsController = async (
       filters,
     })) as SearchResponse;
 
-    return response.status(200).json({ message: "success", result });
+    const data = {
+      message: "success",
+      result,
+    };
+    console.log("Data", data);
+    return response.send(data);
   } catch (error) {
     if (error instanceof AxiosError) {
       console.log(error.response?.data);
