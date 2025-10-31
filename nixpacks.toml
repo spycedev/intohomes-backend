@@ -1,8 +1,9 @@
 [phases.setup]
+# Ensure proper Node.js and basic utilities
 nixPkgs = ["bash", "coreutils", "nodejs_20"]
 
 [phases.install]
-# Required native libs for node-canvas, sharp, etc.
+# Install required native libraries
 aptPkgs = [
   "build-essential",
   "libcairo2-dev",
@@ -13,7 +14,7 @@ aptPkgs = [
 ]
 
 cmds = [
-  "npm ci --omit=dev"
+  "npm install --omit=dev"
 ]
 
 [phases.build]
