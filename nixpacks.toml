@@ -1,8 +1,9 @@
 [phases.setup]
-# Use an Ubuntu base image to ensure apt packages are available
+# Ensure core utilities are available
 nixPkgs = ["bash", "coreutils"]
 
 [phases.install]
+# Install system libraries needed for node-canvas, sharp, etc.
 aptPkgs = [
   "build-essential",
   "libcairo2-dev",
@@ -12,11 +13,10 @@ aptPkgs = [
   "librsvg2-dev"
 ]
 
-# Specify Node version (adjust as needed)
+# Install Node.js 20 (stable LTS)
 [phases.build]
-nixPkgs = ["nodejs_22"]
+nixPkgs = ["nodejs_20"]
 
-# Commands to install dependencies and build your app
 cmds = [
   "npm ci --omit=dev",
   "npm run build"
