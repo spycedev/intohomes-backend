@@ -39,6 +39,7 @@ const searchListings = async ({
     radius: number | undefined;
   };
   filters?: {
+    search?: string | undefined;
     areaOrCity?: string | undefined;
     propertyClass?: string[] | undefined;
     maxPrice?: number | undefined;
@@ -62,14 +63,12 @@ const searchListings = async ({
     const params: Record<string, any> = {};
 
     // Default to residential
-    // params.class = "residential";
 
+    console.log(filters);
     if (map || filters?.areaOrCity) {
       params.map = JSON.stringify(map);
       params.areaOrCity = filters?.areaOrCity;
     }
-
-    // params.streetName = "Skinner";
 
     if (
       coordinates &&
@@ -83,10 +82,11 @@ const searchListings = async ({
     }
 
     params.status = "A";
-    params.class = ["residential", "condo"];
+    // params.class = ["residential", "condo"];
 
     if (filters) {
       const {
+        search,
         propertyClass,
         maxPrice,
         minPrice,
@@ -108,7 +108,7 @@ const searchListings = async ({
       if (mlsNumbers && mlsNumbers.length > 0) {
         params.mlsNumber = [];
         mlsNumbers.forEach((mlsNumber) => {
-          if (typeof mlsNumber === "string" && mlsNumber[0] === "R") {
+          if (typeof mlsNumber === "string" && mlsNumber?.length === 8) {
             params.mlsNumber.push(mlsNumber);
           }
         });
@@ -128,12 +128,17 @@ const searchListings = async ({
             status === "active" ? "a" : status === "unavailable" ? "u" : null;
         if (typeof minSqft === "number") params.minSqft = minSqft;
         if (typeof maxSqft === "number") params.maxSqft = maxSqft;
+        if (search) params.search = search;
+        if (search)
+          params.searchFields = "address.streetNumber,address.streetName";
         if (city) params.city = city;
         if (streetNumber) params.streetNumber = streetNumber;
         if (streetName) params.streetName = streetName;
         if (zip) params.zip = zip;
       }
     }
+
+    console.log(params);
 
     const response = await repliersApi.get<SearchResponse>("/listings", {
       params,

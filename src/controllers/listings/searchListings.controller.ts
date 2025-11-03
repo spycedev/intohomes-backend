@@ -30,6 +30,7 @@ const schema = z.object({
   maxSqft: z.number().optional(),
   propertyClass: z.string().optional(),
   mlsNumbers: z.array(z.string()).optional(),
+  search: z.string().optional(),
 });
 
 export const searchListingsController = async (
@@ -57,6 +58,7 @@ export const searchListingsController = async (
       streetName,
       zip,
       propertyClass,
+      search,
     } = schema.parse(request.body);
 
     let result: SearchResponse | undefined;
@@ -79,6 +81,7 @@ export const searchListingsController = async (
       streetName,
       zip,
       propertyClass: propertyClass?.split(",").map((item) => item.trim()),
+      search,
     };
 
     const coordinatesObj = {
@@ -97,7 +100,7 @@ export const searchListingsController = async (
       message: "success",
       result,
     };
-    console.log("Data", data);
+
     return response.send(data);
   } catch (error) {
     if (error instanceof AxiosError) {
